@@ -1,0 +1,116 @@
+.navbar {
+    width: 100%;
+    padding: 20px 6%;
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    font-size: 14px;
+    color: #e5e5e5;
+    background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), 20%, transparent);
+    z-index: 1;
+}
+
+.navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.navbar-left img{
+    width: 90px;
+
+}
+
+.navbar-left ul{
+    display: flex;
+    gap: 20px;
+    list-style: none;
+}
+
+.navbar-left li{
+    cursor: pointer;
+}
+
+.navbar-right{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.navbar-right .icons{
+    width: 20px;
+    cursor: pointer;
+}
+
+.navbar-right .profile{
+    width: 35px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.navbar-profile{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.navbar .dropdown{
+    position: absolute;
+    top: 90%;
+    right: 0;
+    background-color: #191919;
+    border-radius: 2px;
+    width: max-content;
+    padding: 18px 22px;
+    text-decoration: underline;
+    z-index: 1;
+    display: none;
+}
+
+.navbar .dropdown p{
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.navbar-profile:hover .dropdown{
+    display: block;
+}
+
+.nav-dark{
+    background-color: #191919;
+}
+
+@media screen and (max-width: 1000px) {
+    .navbar{
+        padding: 10px 3%;
+    }
+    .navbar-left ul{
+        display: none;
+    }
+    .navbar img{
+        height: 25px;
+    }
+    .navbar-right img{
+        width: 20px;
+        height: 100%;
+    }
+    
+}
+
+@media screen and (max-width: 500px) {
+    .navbar{
+        padding: 20px 3%;
+    }
+    .navbar-right{
+        gap: 25px;
+        margin: 0;
+        padding: 0;
+    }
+    .navbar-right .profile{
+        height: 100%;
+        width: 20px;
+    }
+    
+}

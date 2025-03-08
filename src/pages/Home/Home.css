@@ -1,0 +1,137 @@
+/* CSS Variables for consistent, reusable values */
+:root {
+    --primary-color: white;
+    --primary-hover-color: #ffffffbf;
+    --dark-color: #6d6d6eb3;
+    --dark-hover-color: #b2b2b3b3;
+    --font-size-default: 15px;
+    --font-size-small: 12px;
+    --btn-gap: 10px;
+    --btn-padding: 8px 22px;
+    --caption-padding-horizontal: 5%;
+    --caption-padding-bottom: 2%;
+    --card-padding: 3%;
+    --mobile-card-padding: 4%;
+    --image-max-width: 420px;
+    --image-small-width: 40%;
+  }
+
+/* Global styles and reusable utility classes */
+.hero {
+    position: relative;
+}
+
+.banner-img {
+    width: 100%;
+    mask-image: linear-gradient(to right, transparent, black 75%);
+    -weblit-mask-image: linear-gradient(to right, transparent, black 75%);
+    object-fit: cover;
+    height: 90vh;
+}
+
+.hero-caption {
+    position: absolute;
+    width: 100%;
+    padding: var(--caption-padding-bottom) var(--caption-padding-horizontal);
+    bottom: 0;
+}
+
+.caption-img {
+    width: 90%;
+    max-width: var(--image-max-width);
+    margin-bottom: 30px;
+}
+
+.hero-caption p {
+    font-size: 17px;
+    max-width: 50vw;
+}
+
+.hero-btns {
+    display: flex;
+    gap: var(--btn-gap);
+    margin: 25px 0 20px;
+}
+
+/* Utility button styles */
+.hero-btns .btn {
+    border: 0;
+    outline: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--btn-gap);
+    padding: var(--btn-padding);
+    border-radius: 5px;
+    background: var(--primary-color);
+    font-size: var(--font-size-default);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.hero-btns .btn:hover {
+    background: var(--primary-hover-color);
+}
+
+.hero-btns .btn img {
+    width: 25px;
+}
+
+.hero-btns .btn.dark-btn {
+    color: #fff;
+    background: var(--dark-color);
+}
+
+.hero-btns .btn.dark-btn:hover {
+    background: var(--dark-hover-color);
+}
+
+.more-cards {
+    padding: 0 var(--card-padding);
+    box-sizing: border-box;
+}
+
+/* Media Queries */
+@media screen and (max-width: 1250px) {
+    .hero-caption .title-cards {
+        display: none;
+    }
+
+    .hero-btns {
+        flex-direction: column;
+        margin: 25px 0 15px;
+        width: 150px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .hero-caption {
+        padding-left: var(--mobile-card-padding);
+        padding-right: var(--mobile-card-padding);
+    }
+
+    .caption-img {
+        margin-bottom: 10px;
+        width: var(--image-small-width);
+    }
+
+    .hero-caption p {
+        font-size: var(--font-size-small);
+        margin-bottom: 10px;
+    }
+
+    .btn img {
+        width: 20px;
+    }
+
+    .more-cards {
+        padding: 0 var(--mobile-card-padding);
+    }
+
+    .hero-btns {
+        flex-direction: column;
+        margin: 20px 0 15px;
+        width: 150px;
+        font-size: var(--font-size-small);
+    }
+}
