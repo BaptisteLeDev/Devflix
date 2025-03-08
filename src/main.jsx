@@ -10,5 +10,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
+    <SpeedInsights />
   </React.StrictMode>,
 )
