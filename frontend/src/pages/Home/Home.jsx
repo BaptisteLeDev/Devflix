@@ -50,7 +50,7 @@ const Home = () => {
         <TitleCards title="Meilleures notations" category="top_rated" />
         <TitleCards title="Populaire" category="now_playing" />
         <TitleCards title="Bientôt sur Netflix" category="upcoming" />
-        <TitleCards title="Film en VO" language="en-US" />
+        <TitleCards title="Film en VO" category="popular_vo" language="en-US" />
       </div>
       <Footer />
     </div>

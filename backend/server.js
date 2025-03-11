@@ -45,13 +45,43 @@ app.get('/api/movies/popular', async (req, res) => {
   }
 });
 
-// Autres routes pour différentes catégories de films
+// Route pour obtenir les films populaires en VO
+app.get('/api/movies/popular_vo', async (req, res) => {
+  try {
+    const response = await axios.get(`https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&language=en-US`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la récupération des films populaires en VO' });
+  }
+});
+
+// Routes pour différentes catégories de films
 app.get('/api/movies/top_rated', async (req, res) => {
   try {
     const response = await axios.get(`https://api.themoviedb.org/3/movie/top_rated?api_key=${TMDB_API_KEY}&language=fr-FR`);
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Erreur lors de la récupération des films les mieux notés' });
+  }
+});
+
+// Route pour obtenir les films a venir
+app.get('/api/movies/upcoming', async (req, res) => {
+  try {
+    const response = await axios.get(`https://api.themoviedb.org/3/movie/upcoming?api_key=${TMDB_API_KEY}&language=fr-FR`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la récupération des films A venir' });
+  }
+});
+
+// Route pour obtenir les films Now playing
+app.get('/api/movies/now_playing', async (req, res) => {
+  try {
+    const response = await axios.get(`https://api.themoviedb.org/3/movie/now_playing?api_key=${TMDB_API_KEY}&language=fr-FR`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la récupération des films Now playing' });
   }
 });
 
