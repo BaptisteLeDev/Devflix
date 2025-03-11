@@ -1,19 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './TitleCards.css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const TitleCards = ({ title, category, language }) => {
 
     const [apiData, setApiData] = useState([]);
     const cardsRef = useRef();
-
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            Authorization: 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZGM1NGZkN2MxOTEzNDBlZjU0ZGJjN2I3ZjA3NjNjOSIsIm5iZiI6MTczNjk1MjQxMi45ODU5OTk4LCJzdWIiOiI2Nzg3Y2E1Y2I1MGM3MWRiNWM0ZTY5NmQiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.WwhF3doAdurJrUSghlR2I1GDFFp-If62gKtEiK93KII'
-        }
-    };
 
     // Gère le défilement horizontal avec la molette de la souris
     const handleWheel = (event) => {
@@ -22,14 +15,19 @@ const TitleCards = ({ title, category, language }) => {
     }
 
     useEffect(() => {
-        // Récupère les données de l'API pour les films
-        fetch(`https://api.themoviedb.org/3/movie/${category ? category : 'now_playing'}?language=${language ? language : 'fr'}&page=1`, options)
-            .then(res => res.json())
-            .then(res => setApiData(res.results))
-            .catch(err => console.error(err));
+        // Récupère les données de l'API pour les films via le back-end
+        const fetchMovies = async () => {
+            try {
+                const response = await axios.get(`http://localhost:5000/api/movies/${category ? category : 'now_playing'}?language=${language ? language : 'fr'}`);
+                setApiData(response.data.results);
+            } catch (error) {
+                console.error('Erreur lors de la récupération des films', error);
+            }
+        };
 
+        fetchMovies();
         cardsRef.current.addEventListener('wheel', handleWheel);
-    }, [])
+    }, [category, language]);
 
     return (
         <div className='title-cards'>

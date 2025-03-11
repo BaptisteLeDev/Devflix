@@ -11,9 +11,10 @@ import {
     collection,
     getFirestore
 } from "firebase/firestore";
+import { toast } from 'react-toastify';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4",
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY, // Utilisez import.meta.env
     authDomain: "netflix-clone-bdev.firebaseapp.com",
     projectId: "netflix-clone-bdev",
     storageBucket: "netflix-clone-bdev.firebasestorage.app",
@@ -21,7 +22,7 @@ const firebaseConfig = {
     appId: "1:144693247738:web:0ca5327ec2857ab1959343",
     measurementId: "G-6X357CZ4VF"
 };
-import { toast } from 'react-toastify';
+
 
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
@@ -49,11 +50,9 @@ const signup = async (name, email, password) => {
 const login = async (email, password) => {
     try {
         await signInWithEmailAndPassword(auth, email, password);
-
     } catch (error) {
         console.log(error);
         toast.error(error.code.split('/')[1].split('-').join(''));
-
     }
 }
 

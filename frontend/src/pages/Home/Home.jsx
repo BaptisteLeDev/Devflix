@@ -15,7 +15,7 @@ const Home = () => {
   useEffect(() => {
     const fetchPopularMovies = async () => {
       try {
-        const response = await axios.get('/api/movies/popular');
+        const response = await axios.get('http://localhost:5000/api/movies/popular');
         setPopularMovies(response.data.results);
       } catch (error) {
         console.error('Erreur lors de la récupération des films populaires', error);
@@ -36,7 +36,7 @@ const Home = () => {
           <div className="hero-btns">
             <button className="btn">
               <img src={playIcon} alt="play" />
-              Regarder
+              Lire
             </button>
             <button className="btn dark-btn">
               <img src={infoIcon} alt="info" />
