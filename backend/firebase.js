@@ -1,5 +1,30 @@
-import axios from 'axios';
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import {
+    getAuth,
+    signOut
+} from "firebase/auth";
+import {
+    getFirestore
+} from "firebase/firestore";
 import { toast } from 'react-toastify';
+import axios from 'axios';
+
+const firebaseConfig = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY, // Utilisez import.meta.env
+    authDomain: "netflix-clone-bdev.firebaseapp.com",
+    projectId: "netflix-clone-bdev",
+    storageBucket: "netflix-clone-bdev.firebasestorage.app",
+    messagingSenderId: "144693247738",
+    appId: "1:144693247738:web:0ca5327ec2857ab1959343",
+    measurementId: "G-6X357CZ4VF"
+};
+
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 // Fonction d'inscription
 const signup = async (name, email, password) => {
@@ -30,7 +55,9 @@ const logout = async () => {
 }
 
 export {
-  signup,
-  login,
-  logout
+    signup,
+    login,
+    logout,
+    auth,
+    db
 }

@@ -5,30 +5,24 @@ import search_icon from '../../assets/search_icon.svg';
 import bell_icon from '../../assets/bell_icon.svg';
 import profile_img from '../../assets/profile_img.png';
 import caret_icon from '../../assets/caret_icon.svg';
-import { logout, auth, db } from '../../firebase'; // Ajouter db pour accéder à Firestore
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { logout } from '../../firebase'; // Utilisez uniquement logout
 
 const Navbar = () => {
   const [name, setName] = useState('');
   const navRef = useRef();
 
   useEffect(() => {
-    // Écoute les changements d'état de connexion de l'utilisateur
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // Récupère les données de Firestore pour l'utilisateur connecté
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          setName(userDoc.data().name); // Récupère le champ "name" et le met dans l'état local
-        }
-      } else {
-        setName(''); // Réinitialise si déconnecté
+    // Simulez la récupération du nom de l'utilisateur depuis le back-end
+    const fetchUserName = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/user'); // Remplacez par votre route back-end
+        setName(response.data.name);
+      } catch (error) {
+        console.error('Erreur lors de la récupération du nom de l\'utilisateur', error);
       }
-    });
+    };
 
-    // Nettoie l'écoute
-    return () => unsubscribe();
+    fetchUserName();
   }, []);
 
   useEffect(() => {
