@@ -1,3 +1,4 @@
+// filepath: c:\Users\bapti\Documents\GitHub\Devflix\backend\server.js
 const express = require('express');
 const axios = require('axios');
 const dotenv = require('dotenv');
@@ -8,6 +9,25 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
+
+// Liste des origines autorisées
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5500",
+    "https://devflix-ivory-three.vercel.app/",
+];
+
+// Middleware pour ajouter les en-têtes CORS
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 
 // Initialiser Firebase Admin SDK
 admin.initializeApp({
