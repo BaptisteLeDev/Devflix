@@ -8,15 +8,15 @@ import heroTitle from '../../assets/hero_title.png';
 import playIcon from '../../assets/play_icon.png';
 import infoIcon from '../../assets/info_icon.png';
 
-// Constants for reusable assets and text
+// Constantes pour les textes et les icônes réutilisables
 const HERO_TEXT =
     "Une capitaine de l'armée et son bataillon historique exclusivement composé d'Afro-Américaines défient les obstacles pour apporter de l'espoir au front pendant la Seconde Guerre mondiale.";
 const BUTTONS = [
-    { icon: playIcon, text: 'Play', className: 'btn' },
-    { icon: infoIcon, text: 'More Info', className: 'btn dark-btn' },
+    { icon: playIcon, text: 'Regarder', className: 'btn' },
+    { icon: infoIcon, text: 'Plus d\'infos', className: 'btn dark-btn' },
 ];
 
-// Reusable component for buttons
+// Composant réutilisable pour les boutons
 const HeroButtons = () => (
     <div className="hero-btns">
         {BUTTONS.map(({ icon, text, className }) => (
@@ -28,10 +28,10 @@ const HeroButtons = () => (
     </div>
 );
 
-// Reusable component for TitleCards section
+// Composant réutilisable pour la section TitleCards
 const MoreCards = () => (
     <div className="more-cards">
-        <TitleCards title="Meilleures notation" category="top_rated" />
+        <TitleCards title="Meilleures notations" category="top_rated" />
         <TitleCards title="Populaire" category="now_playing" />
         <TitleCards title="Bientôt sur Netflix" category="upcoming" />
         <TitleCards title="Film en VO" language="en-US" />

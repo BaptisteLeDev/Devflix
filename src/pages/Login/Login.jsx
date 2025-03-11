@@ -4,9 +4,9 @@ import logo from '../../assets/logo.png';
 import { login, signup } from '../../firebase';
 import netflix_spinner from '../../assets/netflix_spinner.gif';
 
-// Constants
-const SIGN_IN = "Sign In";
-const SIGN_UP = "Sign Up";
+// Constantes pour les états de connexion et d'inscription
+const SIGN_IN = "Se connecter";
+const SIGN_UP = "S'inscrire";
 
 const Login = () => {
   const [signState, setSignState] = useState(SIGN_IN);
@@ -15,7 +15,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Authenticate user
+  // Authentification de l'utilisateur
   const handleAuth = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -27,7 +27,7 @@ const Login = () => {
     setLoading(false);
   };
 
-  // Render name input field for Sign Up
+  // Affiche le champ de nom pour l'inscription
   const renderNameInput = () =>
     signState === SIGN_UP && (
       <input
@@ -39,7 +39,7 @@ const Login = () => {
       />
     );
 
-  // Render appropriate Auth button based on state
+  // Affiche le bouton d'authentification approprié en fonction de l'état
   const renderAuthButton = () =>
     signState === SIGN_UP ? (
       <button onClick={handleAuth} type="submit">
@@ -51,7 +51,7 @@ const Login = () => {
       </button>
     );
 
-  // Render switch text between "Sign In" and "Sign Up"
+  // Affiche le texte de basculement entre "Se connecter" et "S'inscrire"
   const signStateSwitchText = () => (
     signState === SIGN_IN ? (
       <p>
@@ -88,7 +88,7 @@ const Login = () => {
           <input
             type="password"
             id="pass"
-            placeholder="Password"
+            placeholder="Mot de passe"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required

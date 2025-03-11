@@ -12,13 +12,14 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Écoute les changements d'état de connexion de l'utilisateur
     onAuthStateChanged(auth, async(user) => {
       if (user) {
-        console.log('Logged In');
+        console.log('Connecté');
         navigate('/home')
       }
       else {
-        console.log('Logged Out');
+        console.log('Déconnecté');
         navigate('/login')
       }
     })

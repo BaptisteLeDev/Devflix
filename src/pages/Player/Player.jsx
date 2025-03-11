@@ -24,6 +24,7 @@ const Player = () => {
   };
 
   useEffect(() => {
+    // Récupère les données de l'API pour la vidéo
     fetch(`https://api.themoviedb.org/3/movie/${id}/videos?language=fr`, options)
       .then(res => res.json())
       .then(res => setApiData(res.results[0]))

@@ -2,8 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import './TitleCards.css';
 import { Link } from 'react-router-dom';
 
-
-
 const TitleCards = ({ title, category, language }) => {
 
     const [apiData, setApiData] = useState([]);
@@ -17,16 +15,15 @@ const TitleCards = ({ title, category, language }) => {
         }
     };
 
-
-
+    // Gère le défilement horizontal avec la molette de la souris
     const handleWheel = (event) => {
         event.preventDefault();
         cardsRef.current.scrollLeft += event.deltaY;    
     }
 
     useEffect(() => {
-
-        fetch(`https://api.themoviedb.org/3/movie/${category?category:'now_playing'}?language=${language?language:'fr'}&page=1`, options)
+        // Récupère les données de l'API pour les films
+        fetch(`https://api.themoviedb.org/3/movie/${category ? category : 'now_playing'}?language=${language ? language : 'fr'}&page=1`, options)
             .then(res => res.json())
             .then(res => setApiData(res.results))
             .catch(err => console.error(err));
@@ -40,7 +37,7 @@ const TitleCards = ({ title, category, language }) => {
             <div className='card-list' ref={cardsRef}>
                 {apiData.map((card, index) => {
                     return <Link to={`/player/${card.id}`} className='card' key={card.id}>
-                        <img src={'https://image.tmdb.org/t/p/w500'+card.backdrop_path} alt={card.original_title} />
+                        <img src={'https://image.tmdb.org/t/p/w500' + card.backdrop_path} alt={card.original_title} />
                         <p>{card.title}</p>
                     </Link>
                 })}

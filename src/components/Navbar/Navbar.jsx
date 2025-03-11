@@ -46,12 +46,12 @@ const Navbar = () => {
       <div className="navbar-left">
         <img src={logo} alt='logo' />
         <ul>
-          <li onClick={'/home'}>Home</li>
-          <li>Série TV</li>
+          <li onClick={'/home'}>Accueil</li>
+          <li>Séries TV</li>
           <li>Films</li>
-          <li>Nouveauté & Populaire</li>
+          <li>Nouveautés & Populaire</li>
           <li>Ma Liste</li>
-          <li>Parcourir </li>
+          <li>Parcourir</li>
         </ul>
       </div>
       <div className="navbar-right">
