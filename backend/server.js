@@ -29,6 +29,9 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware pour parser le corps des requêtes
+app.use(express.json());
+
 // Initialiser Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),

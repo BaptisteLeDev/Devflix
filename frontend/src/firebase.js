@@ -1,17 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import {
-    createUserWithEmailAndPassword,
     getAuth,
-    signInWithEmailAndPassword,
     signOut
 } from "firebase/auth";
 import {
-    addDoc,
-    collection,
     getFirestore
 } from "firebase/firestore";
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY, // Utilisez import.meta.env
@@ -31,34 +28,30 @@ const db = getFirestore(app);
 
 // Fonction d'inscription
 const signup = async (name, email, password) => {
-    try {
-        const res = await createUserWithEmailAndPassword(auth, email, password);
-        const user = res.user;
-        await addDoc(collection(db, 'users'), {
-            uid: user.uid,
-            name,
-            authprovider: 'local',
-            email,
-        });
-    } catch (error) {
-        console.log(error);
-        toast.error(error.code.split('/')[1].split('-').join(''));
-    }
+  try {
+    const response = await axios.post('http://localhost:5000/api/signup', { name, email, password });
+    toast.success('Inscription réussie');
+  } catch (error) {
+    console.log(error);
+    toast.error('Erreur lors de l\'inscription');
+  }
 }
 
 // Fonction de connexion
 const login = async (email, password) => {
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-        console.log(error);
-        toast.error(error.code.split('/')[1].split('-').join(''));
-    }
+  try {
+    const response = await axios.post('http://localhost:5000/api/login', { email, password });
+    toast.success('Connexion réussie');
+  } catch (error) {
+    console.log(error);
+    toast.error('Erreur lors de la connexion');
+  }
 }
 
 // Fonction de déconnexion
-const logout = () => {
-    signOut(auth);
+const logout = async () => {
+  // Implémentez la logique de déconnexion si nécessaire
+  toast.success('Déconnexion réussie');
 }
 
 export {
