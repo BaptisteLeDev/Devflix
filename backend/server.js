@@ -1,16 +1,17 @@
 const express = require('express');
 const axios = require('axios');
-const dotenv = require('dotenv');
-const admin = require('firebase-admin');
-const { auth } = require('./config/firebase-config');
 
-dotenv.config();
+const admin = require('firebase-admin');
+const { auth } = require('./back-firebase');
 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
-const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
+
+
+const TMDB_API_KEY='2dc54fd7c191340ef54dbc7b7f0763c9';
+const FIREBASE_API_KEY='AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4';
+
 
 // Liste des origines autorisées
 const allowedOrigins = [
@@ -34,11 +35,7 @@ app.use((req, res, next) => {
 // Middleware pour parser le corps des requêtes
 app.use(express.json());
 
-// Initialiser Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  databaseURL: "https://netflix-clone-bdev.firebaseio.com"
-});
+
 
 // Route pour obtenir les films populaires
 app.get('/api/movies/popular', async (req, res) => {
@@ -99,7 +96,8 @@ app.post('/api/signup', async (req, res) => {
       password,
       displayName: name
     });
-    res.status(201).json({ user: userRecord });
+    const token = await auth.createCustomToken(userRecord.uid);
+    res.status(201).json({ user: userRecord, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -108,10 +106,10 @@ app.post('/api/signup', async (req, res) => {
 // Route de connexion
 app.post('/api/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const userCredential = await auth.signInWithEmailAndPassword(email, password);
-    const token = await userCredential.user.getIdToken();
-    res.json({ token, user: userCredential.user });
+    const { email } = req.body;
+    const userRecord = await auth.getUserByEmail(email);
+    const token = await auth.createCustomToken(userRecord.uid);
+    res.json({ token, user: userRecord });
   } catch (error) {
     res.status(401).json({ error: error.message });
   }
