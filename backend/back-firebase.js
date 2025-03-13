@@ -24,25 +24,12 @@ const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
 const admin = require('firebase-admin');
-
-const serviceAccount = {
-  "type": "service_account",
-  "project_id": "netflix-clone-bdev",
-  "private_key_id": "votre_private_key_id",
-  "private_key": "-----BEGIN PRIVATE KEY-----\nVotre_Clé_Privée\n-----END PRIVATE KEY-----\n",
-  "client_email": "firebase-adminsdk-xxxxx@netflix-clone-bdev.iam.gserviceaccount.com",
-  "client_id": "votre_client_id",
-  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-  "token_uri": "https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-  "client_x509_cert_url": "votre_cert_url"
-};
+const serviceAccount = require('./config/serviceAccountKey.json');
 
 // Initialiser Firebase Admin SDK une seule fois
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://netflix-clone-bdev.firebaseio.com"
+    credential: admin.credential.cert(serviceAccount)
   });
 }
 
