@@ -92,14 +92,31 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// Route de connexion
+// Route de connexion modifiée
 app.post('/api/login', async (req, res) => {
   try {
-    const { email } = req.body;
+    const { email, password } = req.body;
+    // Récupérer l'utilisateur par email
     const userRecord = await auth.getUserByEmail(email);
+    
+    // Créer un token personnalisé
     const token = await auth.createCustomToken(userRecord.uid);
-    res.json({ token, user: userRecord });
+    
+    // Créer un token ID pour l'authentification
+    const idToken = await auth.createSessionCookie(token, { expiresIn: 60 * 60 * 24 * 5 * 1000 }); // 5 days
+    
+    // Renvoyer le token et les informations utilisateur
+    res.json({
+      token: idToken,
+      user: {
+        uid: userRecord.uid,
+        email: userRecord.email,
+        displayName: userRecord.displayName,
+        authProvider: 'local'
+      }
+    });
   } catch (error) {
+    console.error('Erreur de connexion:', error);
     res.status(401).json({ error: error.message });
   }
 });
@@ -116,24 +133,35 @@ app.post('/api/logout', async (req, res) => {
 
 // Middleware de vérification du token
 const verifyToken = async (req, res, next) => {
-  const token = req.headers.authorization?.split('Bearer ')[1];
-  if (!token) {
-    return res.status(401).json({ error: 'Token non fourni' });
-  }
   try {
-    const decodedToken = await auth.verifyIdToken(token);
-    req.user = decodedToken;
-    next();
+    const token = req.headers.authorization?.split('Bearer ')[1];
+    if (!token) {
+      return res.status(401).json({ error: 'Token non fourni' });
+    }
+
+    try {
+      // Vérifie directement le token avec admin.auth()
+      const decodedToken = await auth.verifyIdToken(token);
+      req.user = decodedToken;
+      next();
+    } catch (error) {
+      console.error('Erreur de vérification du token:', error);
+      res.status(401).json({ error: 'Token invalide' });
+    }
   } catch (error) {
+    console.error('Erreur de vérification du token:', error);
     res.status(401).json({ error: 'Token invalide' });
   }
 };
 
 // Route pour vérifier l'état de l'authentification
-app.get('/api/auth-state', async (req, res) => {
-  // Implémentez la logique pour vérifier l'état de l'authentification
-  // Par exemple, vous pouvez vérifier le token de l'utilisateur ici
-  res.status(200).json({ user: null }); // Remplacez par la logique appropriée
+app.get('/api/auth-state', verifyToken, async (req, res) => {
+  try {
+    const user = await auth.getUser(req.user.uid);
+    res.json({ user });
+  } catch (error) {
+    res.status(401).json({ error: 'Session invalide' });
+  }
 });
 
 app.listen(PORT, () => {

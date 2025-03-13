@@ -7,8 +7,12 @@ const API_URL = 'http://localhost:5000/api';
 const setAuthToken = (token) => {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    // Stocke également le token dans localStorage
+    localStorage.setItem('token', token);
   } else {
     delete axios.defaults.headers.common['Authorization'];
+    // Supprime le token du localStorage
+    localStorage.removeItem('token');
   }
 };
 
@@ -31,24 +35,6 @@ const signup = async (name, email, password) => {
   }
 };
 
-// Fonction de connexion
-const login = async (email, password) => {
-  try {
-    const response = await axios.post(`${API_URL}/login`, { 
-      email, 
-      password 
-    });
-    const { token } = response.data;
-    setAuthToken(token);
-    localStorage.setItem('token', token);
-    toast.success('Connexion réussie');
-    return response.data;
-  } catch (error) {
-    toast.error(error.response?.data?.error || 'Erreur lors de la connexion');
-    throw error;
-  }
-};
-
 // Fonction de déconnexion
 const logout = async () => {
   try {
@@ -66,16 +52,50 @@ const logout = async () => {
 const checkAuthState = async (callback) => {
   try {
     const token = localStorage.getItem('token');
-    if (token) {
-      setAuthToken(token);
+    if (!token) {
+      callback(null);
+      return;
+    }
+
+    setAuthToken(token); // Réinitialise le token dans axios
+
+    try {
       const response = await axios.get(`${API_URL}/auth-state`);
-      callback(response.data.user);
-    } else {
+      if (response.data.user) {
+        callback(response.data.user);
+      } else {
+        setAuthToken(null);
+        callback(null);
+      }
+    } catch (error) {
+      console.error('Erreur auth-state:', error);
+      setAuthToken(null);
       callback(null);
     }
   } catch (error) {
-    console.error('Erreur lors de la vérification de l\'authentification:', error);
+    console.error('Erreur checkAuthState:', error);
+    setAuthToken(null);
     callback(null);
+  }
+};
+
+// Fonction de connexion modifiée
+const login = async (email, password) => {
+  try {
+    const response = await axios.post(`${API_URL}/login`, { 
+      email, 
+      password 
+    });
+    
+    if (response.data.token) {
+      setAuthToken(response.data.token);
+      localStorage.setItem('token', response.data.token);
+      toast.success('Connexion réussie');
+    }
+    return response.data;
+  } catch (error) {
+    toast.error(error.response?.data?.error || 'Erreur lors de la connexion');
+    throw error;
   }
 };
 
@@ -83,5 +103,5 @@ export {
   signup,
   login,
   logout,
-  checkAuthState  // Ajout de l'export ici
+  checkAuthState
 };

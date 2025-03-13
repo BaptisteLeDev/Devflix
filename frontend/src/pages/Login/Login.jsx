@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import './Login.css';
-import logo from '../../assets/logo.png';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { login, signup } from '../../front-firebase';
+import './Login.css';
 import netflix_spinner from '../../assets/netflix_spinner.gif';
 
 // Constantes pour les états de connexion et d'inscription
@@ -9,30 +9,28 @@ const SIGN_IN = "Se connecter";
 const SIGN_UP = "S'inscrire";
 
 const Login = () => {
-  const [signState, setSignState] = useState(SIGN_IN);
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [signState, setSignState] = useState(SIGN_IN);
   const [loading, setLoading] = useState(false);
-  const [firebaseInitialized, setFirebaseInitialized] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Vérifier si Firebase est initialisé
-    if (auth) {
-      setFirebaseInitialized(true);
+  const handleAuth = async (e) => {
+    e.preventDefault();
+    setLoading(true); // Afficher le spinner pendant l'authentification
+    
+    try {
+      if (signState === SIGN_UP) {
+        await signup(name, email, password);
+      } else {
+        await login(email, password);
+      }
+      navigate('/home');
+    } catch (error) {
+      console.error('Erreur:', error);
+      setLoading(false); // Cacher le spinner en cas d'erreur
     }
-  }, []);
-
-  // Authentification de l'utilisateur
-  const handleAuth = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    if (signState === SIGN_IN) {
-      await login(email, password);
-    } else {
-      await signup(name, email, password);
-    }
-    setLoading(false);
   };
 
   // Affiche le champ de nom pour l'inscription
@@ -74,7 +72,7 @@ const Login = () => {
     )
   );
 
-  if (!firebaseInitialized) {
+  if (loading) {
     return (
       <div className="login-spinner">
         <img src={netflix_spinner} alt="spinner" />
@@ -82,21 +80,15 @@ const Login = () => {
     );
   }
 
-  return loading ? (
-    <div className="login-spinner">
-      <img src={netflix_spinner} alt="spinner" />
-    </div>
-  ) : (
+  return (
     <div className="login">
-      <img src={logo} alt="logo" className="login-logo" />
       <div className="login-form">
         <h1>{signState}</h1>
-        <form action="">
+        <form onSubmit={handleAuth}>
           {renderNameInput()}
           <input
             type="email"
             id="email"
-            pattern=".+@example\.com"
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -111,17 +103,8 @@ const Login = () => {
             required
           />
           {renderAuthButton()}
-          <div className="form-help">
-            <div className="remember">
-              <input type="checkbox" />
-              <label>Se souvenir</label>
-            </div>
-            <div className="help">
-              <p>Besoin d'aide ?</p>
-            </div>
-          </div>
+          {signStateSwitchText()}
         </form>
-        <div className="form-switch">{signStateSwitchText()}</div>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import logo from '../../assets/logo.png';
 import search_icon from '../../assets/search_icon.svg';
@@ -8,22 +9,8 @@ import caret_icon from '../../assets/caret_icon.svg';
 import { logout } from '../../front-firebase';
 
 const Navbar = () => {
-  const [name, setName] = useState('');
   const navRef = useRef();
-
-  useEffect(() => {
-    // Simulez la récupération du nom de l'utilisateur depuis le back-end
-    const fetchUserName = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/user'); // Remplacez par votre route back-end
-        setName(response.data.name);
-      } catch (error) {
-        console.error('Erreur lors de la récupération du nom de l\'utilisateur', error);
-      }
-    };
-
-    fetchUserName();
-  }, []);
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.addEventListener('scroll', () => {
@@ -35,12 +22,21 @@ const Navbar = () => {
     });
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/login');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
+  };
+
   return (
     <div ref={navRef} className='navbar'>
       <div className="navbar-left">
-        <img src={logo} alt='logo' />
+        <img src={logo} alt='logo' onClick={() => navigate('/home')} style={{ cursor: 'pointer' }} />
         <ul>
-          <li onClick={'/home'}>Accueil</li>
+          <li onClick={() => navigate('/home')}>Accueil</li>
           <li>Séries TV</li>
           <li>Films</li>
           <li>Nouveautés & Populaire</li>
@@ -55,7 +51,7 @@ const Navbar = () => {
           <img src={profile_img} alt="profile" className='profile' />
           <img src={caret_icon} alt="caret" />
           <div className="dropdown">
-            <p onClick={() => { logout(); }}>Se déconnecter</p>
+            <p onClick={handleLogout}>Se déconnecter</p>
           </div>
         </div>
       </div>
