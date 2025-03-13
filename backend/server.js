@@ -1,17 +1,13 @@
-const express = require('express');
-const axios = require('axios');
-
-const admin = require('firebase-admin');
-const { auth } = require('./back-firebase');
-
+import express from 'express';
+import { auth } from './back-firebase.js';
+import axios from 'axios';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const TMDB_API_KEY = '2dc54fd7c191340ef54dbc7b7f0763c9';
 
-const TMDB_API_KEY='2dc54fd7c191340ef54dbc7b7f0763c9';
 const FIREBASE_API_KEY='AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4';
-
 
 // Liste des origines autorisées
 const allowedOrigins = [
@@ -22,20 +18,14 @@ const allowedOrigins = [
 
 // Middleware pour ajouter les en-têtes CORS
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     next();
 });
 
 // Middleware pour parser le corps des requêtes
 app.use(express.json());
-
-
 
 // Route pour obtenir les films populaires
 app.get('/api/movies/popular', async (req, res) => {
@@ -96,8 +86,7 @@ app.post('/api/signup', async (req, res) => {
       password,
       displayName: name
     });
-    const token = await auth.createCustomToken(userRecord.uid);
-    res.status(201).json({ user: userRecord, token });
+    res.status(201).json({ user: userRecord });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -148,5 +137,5 @@ app.get('/api/auth-state', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Serveur en cours d'exécution sur le port ${PORT}`);
+  console.log(`Serveur démarré sur le port ${PORT}`);
 });

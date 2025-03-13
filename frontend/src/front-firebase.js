@@ -62,8 +62,26 @@ const logout = async () => {
   }
 };
 
+// Fonction pour vérifier l'état de l'authentification
+const checkAuthState = async (callback) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
+      const response = await axios.get(`${API_URL}/auth-state`);
+      callback(response.data.user);
+    } else {
+      callback(null);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la vérification de l\'authentification:', error);
+    callback(null);
+  }
+};
+
 export {
   signup,
   login,
-  logout
+  logout,
+  checkAuthState  // Ajout de l'export ici
 };
