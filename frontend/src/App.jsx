@@ -14,13 +14,20 @@ const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    checkAuthState((user) => {
-      setIsAuthenticated(!!user);
-      setLoading(false);
-      if (!user && window.location.pathname !== '/login') {
-        navigate('/login');
-      }
-    });
+    const verifyAuth = async () => {
+      // Ajouter un délai pour laisser le temps au token d'être enregistré
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      checkAuthState((user) => {
+        setIsAuthenticated(!!user);
+        setLoading(false);
+        if (user) {
+          navigate('/home');
+        }
+      });
+    };
+
+    verifyAuth();
   }, [navigate]);
 
   if (loading) {
@@ -51,3 +58,5 @@ const App = () => {
 };
 
 export default App;
+
+

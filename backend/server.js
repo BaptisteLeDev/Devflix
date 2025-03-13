@@ -92,20 +92,27 @@ app.post('/api/signup', async (req, res) => {
   }
 });
 
-// Route de connexion modifiée
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    
     // Récupérer l'utilisateur par email
     const userRecord = await auth.getUserByEmail(email);
     
-    // Créer un token personnalisé
-    const token = await auth.createCustomToken(userRecord.uid);
+    if (!userRecord) {
+      return res.status(401).json({ error: 'Utilisateur non trouvé' });
+    }
+
+    // Vérifier le mot de passe
+    const isValidPassword = await userRecord.user.isValidPassword(password);
     
-    // Créer un token ID pour l'authentification
-    const idToken = await auth.createSessionCookie(token, { expiresIn: 60 * 60 * 24 * 5 * 1000 }); // 5 days
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Mot de passe incorrect' });
+    }
+
+    // Générer un ID token à la place d'un custom token
+    const idToken = await userRecord.getIdToken();
     
-    // Renvoyer le token et les informations utilisateur
     res.json({
       token: idToken,
       user: {
@@ -117,7 +124,7 @@ app.post('/api/login', async (req, res) => {
     });
   } catch (error) {
     console.error('Erreur de connexion:', error);
-    res.status(401).json({ error: error.message });
+    res.status(401).json({ error: 'Email ou mot de passe incorrect' });
   }
 });
 
@@ -140,7 +147,7 @@ const verifyToken = async (req, res, next) => {
     }
 
     try {
-      // Vérifie directement le token avec admin.auth()
+      // Vérifier le token avec Firebase Admin
       const decodedToken = await auth.verifyIdToken(token);
       req.user = decodedToken;
       next();
