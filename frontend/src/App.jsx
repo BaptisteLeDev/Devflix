@@ -1,28 +1,25 @@
-import React, { useEffect } from 'react'
-import Home from './pages/Home/Home'
-import Login from './pages/Login/Login'
+import React, { useEffect } from 'react';
+import Home from './pages/Home/Home';
+import Login from './pages/Login/Login';
 import Player from './pages/Player/Player';
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { checkAuthState } from './firebase'; // Nouvelle fonction pour vérifier l'état de l'authentification
 
 const App = () => {
-
   const navigate = useNavigate();
 
   useEffect(() => {
     // Écoute les changements d'état de connexion de l'utilisateur
-    onAuthStateChanged(auth, async(user) => {
+    checkAuthState((user) => {
       if (user) {
         console.log('Connecté');
-        navigate('/home')
-      }
-      else {
+        navigate('/home');
+      } else {
         console.log('Déconnecté');
-        navigate('/login')
+        navigate('/login');
       }
-    })
+    });
   }, []);
 
   return (
@@ -35,7 +32,7 @@ const App = () => {
         <Route path="*" element={<Navigate to="/login" />} /> {/* Redirection pour les erreurs 404 */}
       </Routes>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

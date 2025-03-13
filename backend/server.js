@@ -1,4 +1,3 @@
-// filepath: c:\Users\bapti\Documents\GitHub\Devflix\backend\server.js
 const express = require('express');
 const axios = require('axios');
 const dotenv = require('dotenv');
@@ -110,14 +109,21 @@ app.post('/api/signup', async (req, res) => {
 
 // Route pour la connexion
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { token } = req.body;
   try {
-    const userRecord = await admin.auth().getUserByEmail(email);
-    // Vous pouvez ajouter une logique pour vérifier le mot de passe ici
+    const decodedToken = await admin.auth().verifyIdToken(token);
+    const userRecord = await admin.auth().getUser(decodedToken.uid);
     res.status(200).json({ message: 'Connexion réussie', user: userRecord });
   } catch (error) {
     res.status(500).json({ error: 'Erreur lors de la connexion de l\'utilisateur' });
   }
+});
+
+// Route pour vérifier l'état de l'authentification
+app.get('/api/auth-state', async (req, res) => {
+  // Implémentez la logique pour vérifier l'état de l'authentification
+  // Par exemple, vous pouvez vérifier le token de l'utilisateur ici
+  res.status(200).json({ user: null }); // Remplacez par la logique appropriée
 });
 
 app.listen(PORT, () => {
