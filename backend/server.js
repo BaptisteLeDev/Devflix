@@ -8,6 +8,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
+const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
 
 // Liste des origines autorisées
 const allowedOrigins = [
@@ -109,11 +110,16 @@ app.post('/api/signup', async (req, res) => {
 
 // Route pour la connexion
 app.post('/api/login', async (req, res) => {
-  const { token } = req.body;
+  const { email, password } = req.body;
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
-    const userRecord = await admin.auth().getUser(decodedToken.uid);
-    res.status(200).json({ message: 'Connexion réussie', user: userRecord });
+    const userRecord = await admin.auth().getUserByEmail(email);
+    // Vérifiez le mot de passe ici
+    const user = await admin.auth().verifyPassword(email, password);
+    if (user) {
+      res.status(200).json({ message: 'Connexion réussie', user: userRecord });
+    } else {
+      res.status(401).json({ error: 'Mot de passe incorrect' });
+    }
   } catch (error) {
     res.status(500).json({ error: 'Erreur lors de la connexion de l\'utilisateur' });
   }
