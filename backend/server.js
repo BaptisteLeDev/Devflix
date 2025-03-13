@@ -2,8 +2,10 @@ const express = require('express');
 const axios = require('axios');
 const dotenv = require('dotenv');
 const admin = require('firebase-admin');
+const { auth } = require('./config/firebase-config');
 
 dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -88,42 +90,57 @@ app.get('/api/movies/now_playing', async (req, res) => {
   }
 });
 
-// Route pour l'inscription
+// Route d'inscription
 app.post('/api/signup', async (req, res) => {
-  const { name, email, password } = req.body;
   try {
-    const userRecord = await admin.auth().createUser({
+    const { name, email, password } = req.body;
+    const userRecord = await auth.createUser({
       email,
       password,
-      displayName: name,
+      displayName: name
     });
-    await admin.firestore().collection('users').doc(userRecord.uid).set({
-      uid: userRecord.uid,
-      name,
-      email,
-    });
-    res.status(201).json({ message: 'Utilisateur créé avec succès' });
+    res.status(201).json({ user: userRecord });
   } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la création de l\'utilisateur' });
+    res.status(400).json({ error: error.message });
   }
 });
 
-// Route pour la connexion
+// Route de connexion
 app.post('/api/login', async (req, res) => {
-  const { email, password } = req.body;
   try {
-    const userRecord = await admin.auth().getUserByEmail(email);
-    // Vérifiez le mot de passe ici
-    const user = await admin.auth().verifyPassword(email, password);
-    if (user) {
-      res.status(200).json({ message: 'Connexion réussie', user: userRecord });
-    } else {
-      res.status(401).json({ error: 'Mot de passe incorrect' });
-    }
+    const { email, password } = req.body;
+    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+    const token = await userCredential.user.getIdToken();
+    res.json({ token, user: userCredential.user });
   } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la connexion de l\'utilisateur' });
+    res.status(401).json({ error: error.message });
   }
 });
+
+// Route de déconnexion
+app.post('/api/logout', async (req, res) => {
+  try {
+    await auth.signOut();
+    res.json({ message: 'Déconnexion réussie' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Middleware de vérification du token
+const verifyToken = async (req, res, next) => {
+  const token = req.headers.authorization?.split('Bearer ')[1];
+  if (!token) {
+    return res.status(401).json({ error: 'Token non fourni' });
+  }
+  try {
+    const decodedToken = await auth.verifyIdToken(token);
+    req.user = decodedToken;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Token invalide' });
+  }
+};
 
 // Route pour vérifier l'état de l'authentification
 app.get('/api/auth-state', async (req, res) => {

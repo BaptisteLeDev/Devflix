@@ -4,7 +4,7 @@ import Login from './pages/Login/Login';
 import Player from './pages/Player/Player';
 import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
-import { checkAuthState } from './firebase'; // Nouvelle fonction pour vérifier l'état de l'authentification
+import { checkAuthState } from './front-firebase'; // Nouvelle fonction pour vérifier l'état de l'authentification
 
 const App = () => {
   const navigate = useNavigate();

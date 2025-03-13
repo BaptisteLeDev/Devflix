@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Login.css';
 import logo from '../../assets/logo.png';
 import { login, signup } from '../../front-firebase';
@@ -14,6 +14,14 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [firebaseInitialized, setFirebaseInitialized] = useState(false);
+
+  useEffect(() => {
+    // Vérifier si Firebase est initialisé
+    if (auth) {
+      setFirebaseInitialized(true);
+    }
+  }, []);
 
   // Authentification de l'utilisateur
   const handleAuth = async (event) => {
@@ -65,6 +73,15 @@ const Login = () => {
       </p>
     )
   );
+
+  if (!firebaseInitialized) {
+    return (
+      <div className="login-spinner">
+        <img src={netflix_spinner} alt="spinner" />
+      </div>
+    );
+  }
+
   return loading ? (
     <div className="login-spinner">
       <img src={netflix_spinner} alt="spinner" />
