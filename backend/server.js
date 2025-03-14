@@ -129,12 +129,9 @@ app.post('/api/login', async (req, res) => {
 
 // Route de déconnexion
 app.post('/api/logout', async (req, res) => {
-  try {
-    await auth.signOut();
-    res.json({ message: 'Déconnexion réussie' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+  // La déconnexion est principalement gérée côté client
+  // Le serveur n'a pas besoin de "déconnecter" l'utilisateur car Firebase utilise des tokens sans état
+  res.json({ message: 'Déconnexion réussie' });
 });
 
 // Middleware de vérification du token
@@ -167,6 +164,23 @@ app.get('/api/auth-state', verifyToken, async (req, res) => {
     res.json({ user });
   } catch (error) {
     res.status(401).json({ error: 'Session invalide' });
+  }
+});
+
+// Route pour obtenir les vidéos d'un film spécifique
+app.get('/api/movies/:id/videos', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { language = 'fr-FR' } = req.query;
+    
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${TMDB_API_KEY}&language=${language}`
+    );
+    
+    res.json(response.data);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des vidéos:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des vidéos' });
   }
 });
 

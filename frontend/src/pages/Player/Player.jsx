@@ -21,7 +21,11 @@ const Player = () => {
     const fetchVideo = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/movies/${id}/videos?language=fr`);
-        setApiData(response.data.results[0]);
+        if (response.data.results && response.data.results.length > 0) {
+          setApiData(response.data.results[0]);
+        } else {
+          console.log("Aucune vidéo disponible pour ce film");
+        }
       } catch (error) {
         console.error('Erreur lors de la récupération de la vidéo', error);
       }
@@ -32,13 +36,29 @@ const Player = () => {
 
   return (
     <div className='player'>
-      <img src={back_arrow_icon} alt='back' className='back-arrow' onClick={() => { navigate(-1) }} />
-      <iframe width='90%' height='90%' src={`https://www.youtube.com/embed/${apiData.key}`} title='trailer' frameBorder="0" allowFullScreen></iframe>
-      <div className="player-info">
-        <p>{apiData.published_at.slice(0, 10)}-</p>
-        <p>{apiData.name}</p>
-        <p>{apiData.typeof}</p>
-      </div>
+      <img src={back_arrow_icon} alt='back' className='back-arrow' onClick={() => navigate(-1)} />
+      {apiData.key ? (
+        <>
+          <iframe 
+            width='90%' 
+            height='90%' 
+            src={`https://www.youtube.com/embed/${apiData.key}`} 
+            title='trailer' 
+            frameBorder="0" 
+            allowFullScreen
+          ></iframe>
+          <div className="player-info">
+            {apiData.published_at && <p>{apiData.published_at.slice(0, 10)}-</p>}
+            <p>{apiData.name || 'Vidéo sans titre'}</p>
+            <p>{apiData.typeof || ''}</p>
+          </div>
+        </>
+      ) : (
+        <div style={{textAlign: 'center'}}>
+          <h2>Vidéo non disponible</h2>
+          <p>Désolé, aucune bande-annonce n'est disponible pour ce contenu.</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,13 +13,21 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.addEventListener('scroll', () => {
-      if (window.scrollY >= 50) {
-        navRef.current.classList.add('nav-dark');
-      } else {
-        navRef.current.classList.remove('nav-dark');
+    const handleScroll = () => {
+      if (navRef.current) {
+        if (window.scrollY >= 50) {
+          navRef.current.classList.add('nav-dark');
+        } else {
+          navRef.current.classList.remove('nav-dark');
+        }
       }
-    });
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const handleLogout = async () => {
