@@ -13,12 +13,17 @@ const FIREBASE_API_KEY='AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4';
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5500",
-    "https://devflix-ivory-three.vercel.app/",
+    "https://devflix-ivory-three.vercel.app", // URL de votre frontend déployé
+    "devflix-backend-production.up.railway.app", // URL de votre backend déployé
 ];
 
 // Middleware pour ajouter les en-têtes CORS
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
+    const origin = req.headers.origin;
+    // Vérifier si l'origine est dans la liste des origines autorisées
+    if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+    }
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
     next();

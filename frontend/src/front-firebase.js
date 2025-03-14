@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_URL = 'http://localhost:5000/api';
+// Utilisation d'une variable d'environnement ou détection de l'environnement
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
 
 // Configuration d'axios avec le token
 const setAuthToken = (token) => {
