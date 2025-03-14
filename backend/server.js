@@ -13,19 +13,29 @@ const FIREBASE_API_KEY='AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4';
 const allowedOrigins = [
     "http://localhost:5173",
     "http://127.0.0.1:5500",
-    "https://devflix-ivory-three.vercel.app", // URL de votre frontend déployé
-    "devflix-backend-production.up.railway.app", // URL de votre backend déployé
+    "https://devflix-ivory-three.vercel.app", 
+    "https://devflix-backend-production.up.railway.app"
 ];
 
-// Middleware pour ajouter les en-têtes CORS
+// Remplacer la gestion CORS par:
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    // Vérifier si l'origine est dans la liste des origines autorisées
     if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    } else {
+        // Accepter tous les domaines en développement
+        // (à supprimer en production)
+        res.setHeader('Access-Control-Allow-Origin', '*');
     }
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+    
     next();
 });
 
