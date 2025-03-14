@@ -5,38 +5,27 @@ import axios from 'axios';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const TMDB_API_KEY = '2dc54fd7c191340ef54dbc7b7f0763c9';
+// Ajoutez cette route au début du fichier pour tester si l'API fonctionne
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API fonctionnelle!' });
+});
 
-const FIREBASE_API_KEY='AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4';
+// Utiliser des variables d'environnement
+const TMDB_API_KEY = process.env.TMDB_API_KEY || '2dc54fd7c191340ef54dbc7b7f0763c9';
+const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || 'AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4';
 
-// Liste des origines autorisées
-const allowedOrigins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5500",
-    "https://devflix-ivory-three.vercel.app", 
-    "https://devflix-backend-production.up.railway.app"
-];
-
-// Remplacer la gestion CORS par:
+// Simplifier la gestion CORS - solution plus robuste
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    } else {
-        // Accepter tous les domaines en développement
-        // (à supprimer en production)
-        res.setHeader('Access-Control-Allow-Origin', '*');
-    }
-    
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-    
-    next();
+  // En production, autoriser uniquement l'origine de votre frontend
+  res.header('Access-Control-Allow-Origin', 'https://devflix-ivory-three.vercel.app');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
 });
 
 // Middleware pour parser le corps des requêtes
