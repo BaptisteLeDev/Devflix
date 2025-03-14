@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const API_URL = 'https://devflix-z59m-baptisteledevs-projects.vercel.app/api';
+const API_URL = 'http://localhost:5000/api';
 
 // Configuration d'axios avec le token
 const setAuthToken = (token) => {
