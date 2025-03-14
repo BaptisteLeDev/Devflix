@@ -17,14 +17,22 @@ const Player = () => {
   });
 
   useEffect(() => {
-    // Récupère les données de l'API pour la vidéo via le back-end
     const fetchVideo = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/movies/${id}/videos?language=fr`);
+        // Modifier fr en fr-FR pour correspondre au format attendu par TMDB
+        const response = await axios.get(`http://localhost:5000/api/movies/${id}/videos?language=fr-FR`);
+        
         if (response.data.results && response.data.results.length > 0) {
           setApiData(response.data.results[0]);
         } else {
-          console.log("Aucune vidéo disponible pour ce film");
+          // Essayer en anglais si aucune vidéo n'est disponible en français
+          const fallbackResponse = await axios.get(`http://localhost:5000/api/movies/${id}/videos?language=en-US`);
+          
+          if (fallbackResponse.data.results && fallbackResponse.data.results.length > 0) {
+            setApiData(fallbackResponse.data.results[0]);
+          } else {
+            console.log("Aucune vidéo disponible pour ce film");
+          }
         }
       } catch (error) {
         console.error('Erreur lors de la récupération de la vidéo', error);
@@ -40,12 +48,17 @@ const Player = () => {
       {apiData.key ? (
         <>
           <iframe 
-            width='90%' 
-            height='90%' 
-            src={`https://www.youtube.com/embed/${apiData.key}`} 
+            width='80%' 
+            height='80%' 
+            // Utiliser youtube-nocookie.com au lieu de youtube.com
+            src={`https://www.youtube-nocookie.com/embed/${apiData.key}`} 
             title='trailer' 
-            frameBorder="0" 
+            frameBorder="0"
             allowFullScreen
+            // Ajouter des attributs pour améliorer la compatibilité
+            loading="lazy"
+            referrerPolicy="origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
           <div className="player-info">
             {apiData.published_at && <p>{apiData.published_at.slice(0, 10)}-</p>}

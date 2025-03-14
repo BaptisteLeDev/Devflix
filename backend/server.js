@@ -173,11 +173,22 @@ app.get('/api/movies/:id/videos', async (req, res) => {
     const { id } = req.params;
     const { language = 'fr-FR' } = req.query;
     
+    console.log(`Recherche de vidéos pour le film ${id} en langue ${language}`);
+    
     const response = await axios.get(
       `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${TMDB_API_KEY}&language=${language}`
     );
     
-    res.json(response.data);
+    // Si aucun résultat en français, essayer en anglais
+    if (!response.data.results || response.data.results.length === 0) {
+      console.log(`Aucune vidéo trouvée en ${language}, recherche en anglais`);
+      const enResponse = await axios.get(
+        `https://api.themoviedb.org/3/movie/${id}/videos?api_key=${TMDB_API_KEY}&language=en-US`
+      );
+      res.json(enResponse.data);
+    } else {
+      res.json(response.data);
+    }
   } catch (error) {
     console.error('Erreur lors de la récupération des vidéos:', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des vidéos' });
