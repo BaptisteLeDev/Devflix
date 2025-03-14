@@ -96,34 +96,33 @@ app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    // Récupérer l'utilisateur par email
-    const userRecord = await auth.getUserByEmail(email);
+    // Utiliser l'API REST Firebase Auth pour la connexion
+    const response = await axios.post(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
+      {
+        email,
+        password,
+        returnSecureToken: true
+      }
+    );
     
-    if (!userRecord) {
-      return res.status(401).json({ error: 'Utilisateur non trouvé' });
-    }
-
-    // Vérifier le mot de passe
-    const isValidPassword = await userRecord.user.isValidPassword(password);
+    // Récupérer le token et l'identifiant utilisateur
+    const { idToken, localId } = response.data;
     
-    if (!isValidPassword) {
-      return res.status(401).json({ error: 'Mot de passe incorrect' });
-    }
-
-    // Générer un ID token à la place d'un custom token
-    const idToken = await userRecord.getIdToken();
+    // Récupérer des informations supplémentaires sur l'utilisateur avec l'Admin SDK
+    const userRecord = await auth.getUser(localId);
     
     res.json({
       token: idToken,
       user: {
         uid: userRecord.uid,
         email: userRecord.email,
-        displayName: userRecord.displayName,
+        displayName: userRecord.displayName || '',
         authProvider: 'local'
       }
     });
   } catch (error) {
-    console.error('Erreur de connexion:', error);
+    console.error('Erreur de connexion:', error.response?.data || error.message);
     res.status(401).json({ error: 'Email ou mot de passe incorrect' });
   }
 });
