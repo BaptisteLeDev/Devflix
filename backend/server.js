@@ -2,6 +2,9 @@ import express from 'express';
 import { auth } from './back-firebase.js';
 import axios from 'axios';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -115,35 +118,37 @@ app.post('/api/signup', async (req, res) => {
 app.post('/api/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log('Tentative de connexion pour:', email);
     
-    // Utiliser l'API REST Firebase Auth pour la connexion
-    const response = await axios.post(
-      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
-      {
-        email,
-        password,
-        returnSecureToken: true
-      }
-    );
-    
-    // Récupérer le token et l'identifiant utilisateur
-    const { idToken, localId } = response.data;
-    
-    // Récupérer des informations supplémentaires sur l'utilisateur avec l'Admin SDK
-    const userRecord = await auth.getUser(localId);
-    
-    res.json({
-      token: idToken,
-      user: {
-        uid: userRecord.uid,
-        email: userRecord.email,
-        displayName: userRecord.displayName || '',
-        authProvider: 'local'
-      }
-    });
+    try {
+      // Étape 1: Authentification avec Firebase REST API
+      const response = await axios.post(
+        `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
+        { email, password, returnSecureToken: true }
+      );
+      
+      console.log('Connexion Firebase réussie, récupération des détails utilisateur');
+      
+      // Étape 2: Récupérer les informations utilisateur 
+      const { idToken, localId, email: userEmail } = response.data;
+      
+      // Retourner directement l'information sans appel à Admin SDK
+      res.json({
+        token: idToken,
+        user: {
+          uid: localId,
+          email: userEmail,
+          displayName: '',
+          authProvider: 'local'
+        }
+      });
+    } catch (authError) {
+      console.error('Erreur d\'authentification Firebase:', authError.response?.data);
+      res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+    }
   } catch (error) {
-    console.error('Erreur de connexion:', error.response?.data || error.message);
-    res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+    console.error('Erreur générale:', error);
+    res.status(500).json({ error: 'Erreur interne du serveur', details: error.message });
   }
 });
 
