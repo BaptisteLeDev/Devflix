@@ -24,7 +24,7 @@ const TitleCards = ({ title, category, language }) => {
         // Récupère les données de l'API pour les films via le back-end
         const fetchMovies = async () => {
             try {
-                const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                const API_URL = 'https://devflix.baptiste-dechamp.mds-vannes.yt/api' || 'http://localhost:5000/api';
                 const response = await axios.get(`${API_URL.replace('/api', '')}/api/movies/${category ? category : 'now_playing'}?language=${language ? language : 'fr'}`);
                 // Filtrer les films qui ont une image disponible
                 const filteredMovies = response.data.results.filter(movie => movie.backdrop_path);

@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000;
 // Utiliser le middleware cors avec les options
 app.use((req, res, next) => {
   // Définir l'en-tête explicitement pour tous les domaines autorisés
-  const allowedOrigins = ['https://devflix-ivory-three.vercel.app', 'http://localhost:5173'];
+  const allowedOrigins = ['https://devflix.baptiste-dechamp.mds-vannes.yt'];
   const origin = req.headers.origin;
   
   if (allowedOrigins.includes(origin)) {

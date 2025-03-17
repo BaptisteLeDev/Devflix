@@ -2,7 +2,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 
 // Utilisation d'une variable d'environnement ou détection de l'environnement
-const API_URL = 'https://devflix-backend-production.up.railway.app/api';
+const API_URL = 'https://devflix.baptiste-dechamp.mds-vannes.yt/api';
 
 
 // Configuration d'axios avec le token
