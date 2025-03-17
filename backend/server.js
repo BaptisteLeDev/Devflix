@@ -1,9 +1,27 @@
 import express from 'express';
 import { auth } from './back-firebase.js';
 import axios from 'axios';
+import cors from 'cors';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Configuration CORS améliorée
+const corsOptions = {
+  origin: ['https://devflix-ivory-three.vercel.app', 'http://localhost:5173'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  credentials: true
+};
+
+// Utiliser le middleware cors avec les options
+app.use(cors(corsOptions));
+
+// Middleware de journalisation
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+  next();
+});
 
 // Ajoutez cette route au début du fichier pour tester si l'API fonctionne
 app.get('/api/test', (req, res) => {
@@ -13,20 +31,6 @@ app.get('/api/test', (req, res) => {
 // Utiliser des variables d'environnement
 const TMDB_API_KEY = process.env.TMDB_API_KEY || '2dc54fd7c191340ef54dbc7b7f0763c9';
 const FIREBASE_API_KEY = process.env.FIREBASE_API_KEY || 'AIzaSyC1014ZMpWNSazrkQW239t99MbRwKFMZi4';
-
-// Simplifier la gestion CORS - solution plus robuste
-app.use((req, res, next) => {
-  // En production, autoriser uniquement l'origine de votre frontend
-  res.header('Access-Control-Allow-Origin', 'https://devflix-ivory-three.vercel.app');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
-  next();
-});
 
 // Middleware pour parser le corps des requêtes
 app.use(express.json());
