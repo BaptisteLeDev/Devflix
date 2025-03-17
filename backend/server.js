@@ -6,16 +6,28 @@ import cors from 'cors';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Configuration CORS améliorée
-const corsOptions = {
-  origin: ['https://devflix-ivory-three.vercel.app', 'http://localhost:5173'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  credentials: true
-};
-
 // Utiliser le middleware cors avec les options
-app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  // Définir l'en-tête explicitement pour tous les domaines autorisés
+  const allowedOrigins = ['https://devflix-ivory-three.vercel.app', 'http://localhost:5173'];
+  const origin = req.headers.origin;
+  
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  
+  // Définir les autres en-têtes CORS
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  // Traiter les requêtes OPTIONS immédiatement
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 // Middleware de journalisation
 app.use((req, res, next) => {
